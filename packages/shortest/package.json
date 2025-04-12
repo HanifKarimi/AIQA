@@ -1,5 +1,5 @@
 {
-  "name": "@antiwork/shortest",
+  "name": "@antiwork/aiqa",
   "version": "0.4.9",
   "description": "AI-powered natural language end-to-end testing framework",
   "type": "module",
@@ -7,7 +7,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "shortest": "./dist/cli/bin.js"
+    "aiqa": "./dist/cli/bin.js"
   },
   "exports": {
     ".": {
@@ -19,7 +19,7 @@
   "files": [
     "dist",
     "dist/cli",
-    "src/shortest.config.ts.example"
+    "src/aiqa.config.ts.example"
   ],
   "scripts": {
     "build": "rimraf dist && pnpm build:types && pnpm build:js && pnpm build:cli",
@@ -36,7 +36,7 @@
     "test:unit": "npx vitest run",
     "test:unit:watch": "npx vitest --watch",
     "test:e2e": "node --import tsx --test tests/e2e/index.ts",
-    "cache:clear": "pnpm build && shortest cache clear --force-purge"
+    "cache:clear": "pnpm build && aiqa cache clear --force-purge"
   },
   "dependencies": {
     "@babel/code-frame": "^7.26.2",
@@ -85,9 +85,9 @@
   "author": "Antiwork",
   "license": "MIT",
   "repository": {
-    "directory": "packages/shortest",
+    "directory": "packages/aiqa",
     "type": "git",
-    "url": "https://github.com/antiwork/shortest"
+    "url": "https://github.com/antiwork/aiqa"
   },
   "keywords": [
     "testing",
@@ -98,9 +98,9 @@
     "playwright"
   ],
   "bugs": {
-    "url": "https://github.com/antiwork/shortest/issues"
+    "url": "https://github.com/antiwork/aiqa/issues"
   },
-  "homepage": "https://github.com/antiwork/shortest#readme",
+  "homepage": "https://github.com/antiwork/aiqa#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

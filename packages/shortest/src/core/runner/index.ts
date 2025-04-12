@@ -15,7 +15,7 @@ import { TestCompiler } from "@/core/compiler";
 import { TestCase } from "@/core/runner/test-case";
 import {
   EXPRESSION_PLACEHOLDER,
-  parseShortestTestFile,
+  parseAIQATestFile,
 } from "@/core/runner/test-file-parser";
 import { TestReporter } from "@/core/runner/test-reporter";
 import { TestRun } from "@/core/runner/test-run";
@@ -24,15 +24,15 @@ import { getLogger, Log } from "@/log";
 import {
   TestContext,
   InternalActionEnum,
-  ShortestStrictConfig,
+  AIQAStrictConfig,
   TestFileContext,
 } from "@/types";
 import { assertDefined } from "@/utils/assert";
 import {
   CacheError,
   getErrorDetails,
-  ShortestError,
-  asShortestError,
+  AIQAError,
+  asAIQAError,
 } from "@/utils/errors";
 
 const testStatusSchema = z.enum(["pending", "running", "passed", "failed"]);
@@ -46,7 +46,7 @@ export const FileResultSchema = z.object({
 export type FileResult = z.infer<typeof FileResultSchema>;
 
 export class TestRunner {
-  private config: ShortestStrictConfig;
+  private config: AIQAStrictConfig;
   private cwd: string;
   private compiler: TestCompiler;
   private browserManager!: BrowserManager;
@@ -55,7 +55,7 @@ export class TestRunner {
   private testFileContext: TestFileContext | null = null;
   private log: Log;
 
-  constructor(cwd: string, config: ShortestStrictConfig) {
+  constructor(cwd: string, config: AIQAStrictConfig) {
     this.config = config;
     this.cwd = cwd;
     this.compiler = new TestCompiler();
@@ -253,7 +253,7 @@ export class TestRunner {
         });
         break;
       default:
-        throw new ShortestError(
+        throw new AIQAError(
           `Unexpected AI response status: ${aiResponse.response.status}`,
         );
     }
@@ -340,7 +340,7 @@ export class TestRunner {
   }
 
   private async executeTestFile(filePath: string, lineNumber?: number) {
-    const registry = (global as any).__shortest__.registry;
+    const registry = (global as any).__aiqa__.registry;
     try {
       this.log.trace("Executing test file", { filePath, lineNumber });
       registry.tests.clear();
@@ -364,7 +364,7 @@ export class TestRunner {
             "Test Discovery",
             `No test found at line ${lineNumber} in ${filePathWithoutCwd}`,
           );
-          throw new ShortestError(
+          throw new AIQAError(
             `No test found at line ${lineNumber} in ${filePathWithoutCwd}`,
           );
         }
@@ -375,7 +375,7 @@ export class TestRunner {
         context = await this.browserManager.launch();
       } catch (error) {
         this.log.error("Browser launching failed", getErrorDetails(error));
-        throw asShortestError(error);
+        throw asAIQAError(error);
       }
       this.log.trace("Creating test context");
       const testContext = await this.createFileTestContext(context);
@@ -449,7 +449,7 @@ export class TestRunner {
       }
     } catch (error) {
       this.log.trace("Handling error for executeTestFile");
-      if (!(error instanceof ShortestError)) throw error;
+      if (!(error instanceof AIQAError)) throw error;
       const fileResult: FileResult = {
         filePath,
         status: "failed",
@@ -467,7 +467,7 @@ export class TestRunner {
     file: string,
     lineNumber: number,
   ): TestCase[] {
-    const testLocations = parseShortestTestFile(file);
+    const testLocations = parseAIQATestFile(file);
     const escapeRegex = (str: string) =>
       str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

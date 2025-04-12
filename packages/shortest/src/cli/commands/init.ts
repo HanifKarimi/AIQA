@@ -35,18 +35,18 @@ import { EnvFile } from "@/utils/env-file";
 import { ShortestError } from "@/utils/errors";
 
 export const initCommand = new Command("init")
-  .description("Initialize Shortest in current directory")
+  .description("Initialize AIQA in current directory")
   .addHelpText(
     "after",
     `
 ${pc.bold("The command will:")}
-- Automatically install the @antiwork/shortest package as a dev dependency if it is not already installed
-- Create a default shortest.config.ts file with boilerplate configuration
+- Automatically install the @antiwork/aiqa package as a dev dependency if it is not already installed
+- Create a default aiqa.config.ts file with boilerplate configuration
 - Generate a ${ENV_LOCAL_FILENAME} file (unless present) with placeholders for required environment variables, such as ANTHROPIC_API_KEY
 - Add ${ENV_LOCAL_FILENAME} and ${DOT_SHORTEST_DIR_NAME} to .gitignore
 
 ${pc.bold("Documentation:")}
-  ${pc.cyan("https://github.com/antiwork/shortest")}
+  ${pc.cyan("https://github.com/antiwork/aiqa")}
 `,
   );
 
@@ -90,7 +90,7 @@ export const executeInitCommand = async () => {
             })),
       },
       {
-        title: "Install Shortest",
+        title: "Install AIQA",
         task: (_, task): Listr =>
           task.newListr(
             [
@@ -99,14 +99,14 @@ export const executeInitCommand = async () => {
                 task: async (ctx, task): Promise<void> => {
                   const packageJson = await getPackageJson();
                   ctx.alreadyInstalled = !!(
-                    packageJson?.dependencies?.["@antiwork/shortest"] ||
-                    packageJson?.devDependencies?.["@antiwork/shortest"]
+                    packageJson?.dependencies?.["@antiwork/aiqa"] ||
+                    packageJson?.devDependencies?.["@antiwork/aiqa"]
                   );
                   if (ctx.alreadyInstalled) {
-                    task.title = `Shortest is already installed`;
+                    task.title = `AIQA is already installed`;
                   } else {
                     task.title =
-                      "Shortest is not installed, starting installation.";
+                      "AIQA is not installed, starting installation.";
                   }
                 },
               },
@@ -174,10 +174,10 @@ export const executeInitCommand = async () => {
                                             : "Use the default API key name",
                                         },
                                         {
-                                          name: "SHORTEST_ANTHROPIC_API_KEY",
-                                          value: "SHORTEST_ANTHROPIC_API_KEY",
+                                          name: "AIQA_ANTHROPIC_API_KEY",
+                                          value: "AIQA_ANTHROPIC_API_KEY",
                                           description:
-                                            "Use a dedicated API key for Shortest",
+                                            "Use a dedicated API key for AIQA",
                                         },
                                       ],
                                     })),
@@ -220,7 +220,7 @@ export const executeInitCommand = async () => {
                         },
                       },
                       {
-                        title: "Adding Shortest login credentials for testing",
+                        title: "Adding AIQA login credentials for testing",
                         task: async (_, task): Promise<Listr> => {
                           await Promise.resolve();
                           return task.newListr([
@@ -230,21 +230,21 @@ export const executeInitCommand = async () => {
                                 (ctx.shortestLoginEmail = await task
                                   .prompt(ListrInquirerPromptAdapter)
                                   .run(input, {
-                                    message: `Enter value for SHORTEST_LOGIN_EMAIL. Skip if the application does not require authentication.`,
+                                    message: `Enter value for AIQA_LOGIN_EMAIL. Skip if the application does not require authentication.`,
                                   })),
                             },
                             {
-                              title: "Saving SHORTEST_LOGIN_EMAIL key",
+                              title: "Saving AIQA_LOGIN_EMAIL key",
                               skip: (ctx): boolean => !ctx.shortestLoginEmail,
                               task: async (ctx, task) => {
                                 const keyAdded = await ctx.envFile.add({
-                                  key: "SHORTEST_LOGIN_EMAIL",
+                                  key: "AIQA_LOGIN_EMAIL",
                                   value: ctx.shortestLoginEmail,
                                 });
                                 if (keyAdded) {
-                                  task.title = `SHORTEST_LOGIN_EMAIL added`;
+                                  task.title = `AIQA_LOGIN_EMAIL added`;
                                 } else {
-                                  task.title = `SHORTEST_LOGIN_EMAIL already exists, skipped`;
+                                  task.title = `AIQA_LOGIN_EMAIL already exists, skipped`;
                                 }
                               },
                             },
@@ -255,22 +255,22 @@ export const executeInitCommand = async () => {
                                 (ctx.shortestLoginPassword = await task
                                   .prompt(ListrInquirerPromptAdapter)
                                   .run(input, {
-                                    message: `Enter value for SHORTEST_LOGIN_PASSWORD`,
+                                    message: `Enter value for AIQA_LOGIN_PASSWORD`,
                                   })),
                             },
                             {
-                              title: "Saving SHORTEST_LOGIN_PASSWORD key",
+                              title: "Saving AIQA_LOGIN_PASSWORD key",
                               skip: (ctx): boolean =>
                                 !ctx.shortestLoginPassword,
                               task: async (ctx, task) => {
                                 const keyAdded = await ctx.envFile.add({
-                                  key: "SHORTEST_LOGIN_PASSWORD",
+                                  key: "AIQA_LOGIN_PASSWORD",
                                   value: ctx.shortestLoginPassword,
                                 });
                                 if (keyAdded) {
-                                  task.title = `SHORTEST_LOGIN_PASSWORD added`;
+                                  task.title = `AIQA_LOGIN_PASSWORD added`;
                                 } else {
-                                  task.title = `SHORTEST_LOGIN_PASSWORD already exists, skipped`;
+                                  task.title = `AIQA_LOGIN_PASSWORD already exists, skipped`;
                                 }
                               },
                             },
@@ -290,7 +290,7 @@ export const executeInitCommand = async () => {
                 enabled: (ctx): boolean => !ctx.alreadyInstalled,
                 task: async (ctx, task) => {
                   const testPattern = ctx.generateSampleTestFile
-                    ? "shortest/**/*.test.ts"
+                    ? "aiqa/**/*.test.ts"
                     : testPatternSchema._def.defaultValue();
                   await generateConfigFile(
                     join(process.cwd(), CONFIG_FILENAME),
@@ -431,11 +431,11 @@ export const executeInitCommand = async () => {
     await tasks.run();
     if (tasks.ctx.generateSampleTestFile) {
       console.log(pc.green("\nSetup complete!"));
-      console.log("Run tests with: npx/pnpm shortest");
+      console.log("Run tests with: npx/pnpm aiqa");
     } else {
       console.log(pc.green("\nInitialization complete! Next steps:"));
       console.log("1. Create your first test file: example.test.ts");
-      console.log("2. Run tests with: npx/pnpm shortest example.test.ts");
+      console.log("2. Run tests with: npx/pnpm aiqa example.test.ts");
     }
   } catch (error) {
     console.error(pc.red("Initialization failed"));
@@ -464,7 +464,7 @@ export const getInstallCmd = async () => {
   const command = resolveCommand(
     packageManager.agent,
     packageManager.agent === "yarn" ? "add" : "install",
-    ["@antiwork/shortest", "--save-dev"],
+    ["@antiwork/aiqa", "--save-dev"],
   );
 
   if (!command) {
