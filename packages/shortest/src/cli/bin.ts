@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import pc from "picocolors";
 import {
-  shortestCommand,
+  aiqaCommand,
   githubCodeCommand,
   initCommand,
   cacheCommands,
@@ -25,31 +25,31 @@ process.on("warning", (warning) => {
   console.warn(warning);
 });
 
-shortestCommand.addCommand(initCommand);
-initCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(initCommand);
+initCommand.copyInheritedSettings(aiqaCommand);
 
-shortestCommand.addCommand(githubCodeCommand);
-githubCodeCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(githubCodeCommand);
+githubCodeCommand.copyInheritedSettings(aiqaCommand);
 
-shortestCommand.addCommand(cacheCommands);
-cacheCommands.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(cacheCommands);
+cacheCommands.copyInheritedSettings(aiqaCommand);
 clearCommand.copyInheritedSettings(cacheCommands);
 
-shortestCommand.addCommand(detectFrameworkCommand);
-detectFrameworkCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(detectFrameworkCommand);
+detectFrameworkCommand.copyInheritedSettings(aiqaCommand);
 
-shortestCommand.addCommand(analyzeCommand);
-analyzeCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(analyzeCommand);
+analyzeCommand.copyInheritedSettings(aiqaCommand);
 
-shortestCommand.addCommand(planCommand);
-planCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(planCommand);
+planCommand.copyInheritedSettings(aiqaCommand);
 
-shortestCommand.addCommand(generateCommand);
-generateCommand.copyInheritedSettings(shortestCommand);
+aiqaCommand.addCommand(generateCommand);
+generateCommand.copyInheritedSettings(aiqaCommand);
 
 const main = async () => {
   try {
-    await shortestCommand.parseAsync();
+    await aiqaCommand.parseAsync();
     process.exit(0);
   } catch (error) {
     const log = getLogger();

@@ -1,4 +1,4 @@
-# Shortest
+# AIQA
 
 AI-powered natural language end-to-end testing framework.
 
@@ -11,28 +11,28 @@ AI-powered natural language end-to-end testing framework.
 
 ### Installation
 
-Use the `shortest init` command to streamline the setup process in a new or existing project.
+Use the `aiqa init` command to streamline the setup process in a new or existing project.
 
-The `shortest init` command will:
+The `aiqa init` command will:
 
 ```sh
-npx @antiwork/shortest init
+npx @antiwork/aiqa init
 ```
 
 This will:
 
-- Automatically install the `@antiwork/shortest` package as a dev dependency if it is not already installed
-- Create a default `shortest.config.ts` file with boilerplate configuration
+- Automatically install the `@antiwork/aiqa` package as a dev dependency if it is not already installed
+- Create a default `aiqa.config.ts` file with boilerplate configuration
 - Generate a `.env.local` file (unless present) with placeholders for required environment variables, such as
-  `SHORTEST_ANTHROPIC_API_KEY` or `ANTHROPIC_API_KEY`
-- Add `.env.local` and `.shortest/` to `.gitignore`
+  `AIQA_ANTHROPIC_API_KEY` or `ANTHROPIC_API_KEY`
+- Add `.env.local` and `.aiqa/` to `.gitignore`
 
 ### Quick start
 
-1. Determine your test entry and add your Anthropic API key in config file: `shortest.config.ts`
+1. Determine your test entry and add your Anthropic API key in config file: `aiqa.config.ts`
 
 ```typescript
-import type { ShortestConfig } from "@antiwork/shortest";
+import type { AIQAConfig } from "@antiwork/aiqa";
 
 export default {
   headless: false,
@@ -46,18 +46,18 @@ export default {
   ai: {
     provider: "anthropic",
   },
-} satisfies ShortestConfig;
+} satisfies AIQAConfig;
 ```
-The Anthropic API key defaults to `SHORTEST_ANTHROPIC_API_KEY` / `ANTHROPIC_API_KEY` environment variables. Can be overwritten via `ai.config.apiKey`.
+The Anthropic API key defaults to `AIQA_ANTHROPIC_API_KEY` / `ANTHROPIC_API_KEY` environment variables. Can be overwritten via `ai.config.apiKey`.
 
 Optionally, you can configure browser behavior using the `browser.contextOptions` property in your configuration file. This allows you to pass custom [Playwright browser context options](https://playwright.dev/docs/api/class-browser#browser-new-context).
 
 2. Create test files using the pattern specified in the config: `app/login.test.ts`
 
 ```typescript
-import { shortest } from "@antiwork/shortest";
+import { aiqa } from "@antiwork/aiqa";
 
-shortest("Login to the app using email and password", {
+aiqa("Login to the app using email and password", {
   username: process.env.GITHUB_USERNAME,
   password: process.env.GITHUB_PASSWORD,
 });
@@ -69,12 +69,12 @@ You can also use callback functions to add additional assertions and other logic
 execution in browser is completed.
 
 ```typescript
-import { shortest } from "@antiwork/shortest";
+import { aiqa } from "@antiwork/aiqa";
 import { db } from "@/lib/db/drizzle";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-shortest("Login to the app using username and password", {
+aiqa("Login to the app using username and password", {
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
 }).after(async ({ page }) => {
@@ -103,16 +103,16 @@ shortest("Login to the app using username and password", {
 You can use lifecycle hooks to run code before and after the test.
 
 ```typescript
-import { shortest } from "@antiwork/shortest";
+import { aiqa } from "@antiwork/aiqa";
 
-shortest.beforeAll(async ({ page }) => {
+aiqa.beforeAll(async ({ page }) => {
   await clerkSetup({
     frontendApiUrl:
       process.env.PLAYWRIGHT_TEST_BASE_URL ?? "http://localhost:3000",
   });
 });
 
-shortest.beforeEach(async ({ page }) => {
+aiqa.beforeEach(async ({ page }) => {
   await clerk.signIn({
     page,
     signInParams: {
@@ -122,22 +122,22 @@ shortest.beforeEach(async ({ page }) => {
   });
 });
 
-shortest.afterEach(async ({ page }) => {
+aiqa.afterEach(async ({ page }) => {
   await page.close();
 });
 
-shortest.afterAll(async ({ page }) => {
+aiqa.afterAll(async ({ page }) => {
   await clerk.signOut({ page });
 });
 ```
 
 ### Chaining tests
 
-Shortest supports flexible test chaining patterns:
+AIQA supports flexible test chaining patterns:
 
 ```typescript
 // Sequential test chain
-shortest([
+aiqa([
   "user can login with email and password",
   "user can modify their account-level refund policy",
 ]);
@@ -148,16 +148,16 @@ const loginAsContractor = "login as contractor with valid credentials";
 const allAppActions = ["send invoice to company", "view invoices"];
 
 // Combine flows with spread operator
-shortest([loginAsLawyer, ...allAppActions]);
-shortest([loginAsContractor, ...allAppActions]);
+aiqa([loginAsLawyer, ...allAppActions]);
+aiqa([loginAsContractor, ...allAppActions]);
 ```
 
-Shortest's style allows non-engineers such as designers, marketers, and PMs to write tests. Here are some examples:
+AIQA's style allows non-engineers such as designers, marketers, and PMs to write tests. Here are some examples:
 
 ```typescript
-shortest("visit every page and ensure no typos");
-shortest("visit every page and ensure mobile layout isn't janky");
-shortest("visit every page and ensure dark mode is considered");
+aiqa("visit every page and ensure no typos");
+aiqa("visit every page and ensure mobile layout isn't janky");
+aiqa("visit every page and ensure dark mode is considered");
 ```
 
 ### API Testing
@@ -169,7 +169,7 @@ const req = new APIRequest({
   baseURL: API_BASE_URI,
 });
 
-shortest(
+aiqa(
   "Ensure the response contains only active users",
   req.fetch({
     url: "/users",
@@ -184,7 +184,7 @@ shortest(
 Or simply:
 
 ```typescript
-shortest(`
+aiqa(`
   Test the API GET endpoint ${API_BASE_URI}/users with query parameter { "active": true }
   Expect the response to contain only active users
 `);
@@ -193,28 +193,28 @@ shortest(`
 ### Running tests
 
 ```bash
-pnpm shortest                   # Run all tests
-pnpm shortest login.test.ts     # Run specific tests from a file
-pnpm shortest login.test.ts:23  # Run specific test from a file using a line number
-pnpm shortest --headless        # Run in headless mode using
+pnpm aiqa                   # Run all tests
+pnpm aiqa login.test.ts     # Run specific tests from a file
+pnpm aiqa login.test.ts:23  # Run specific test from a file using a line number
+pnpm aiqa --headless        # Run in headless mode using
 ```
 
 You can find example tests in the [`examples`](./examples) directory.
 
 ### GitHub 2FA login setup
 
-Shortest currently supports login using Github 2FA. For GitHub authentication tests:
+AIQA currently supports login using Github 2FA. For GitHub authentication tests:
 
 1. Go to your repository settings
 2. Navigate to "Password and Authentication"
 3. Click on "Authenticator App"
 4. Select "Use your authenticator app"
 5. Click "Setup key" to obtain the OTP secret
-6. Add the OTP secret to your `.env.local` file or use the Shortest CLI to add it
+6. Add the OTP secret to your `.env.local` file or use the AIQA CLI to add it
 7. Enter the 2FA code displayed in your terminal into Github's Authenticator setup page to complete the process
 
 ```bash
-shortest --github-code --secret=<OTP_SECRET>
+aiqa --github-code --secret=<OTP_SECRET>
 ```
 
 ### Environment setup
@@ -228,13 +228,13 @@ GITHUB_TOTP_SECRET=your_secret  # Only for GitHub auth tests
 
 ### CI setup
 
-You can run Shortest in your CI/CD pipeline by running tests in headless mode. Make sure to add your Anthropic API key to your CI/CD pipeline secrets.
+You can run AIQA in your CI/CD pipeline by running tests in headless mode. Make sure to add your Anthropic API key to your CI/CD pipeline secrets.
 
 ## Resources
 
-- Visit [GitHub](https://github.com/antiwork/shortest) for detailed docs
+- Visit [GitHub](https://github.com/antiwork/aiqa) for detailed docs
 - [Contributing guide](./CONTRIBUTING.md)
-- [Changelog](https://github.com/antiwork/shortest/releases)
+- [Changelog](https://github.com/antiwork/aiqa/releases)
 
 ### Prerequisites
 

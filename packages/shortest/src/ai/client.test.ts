@@ -235,7 +235,7 @@ describe("AIClient", () => {
 
           await expect(client.runAction("test prompt")).rejects.toMatchObject({
             message: expectedMessage,
-            name: "ShortestError", // AIError gets converted to ShortestError by asShortestError
+            name: "AIQAError", // AIError gets converted to AIQAError by asAIQAError
             type: expectedType,
           });
         },
